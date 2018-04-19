@@ -38,8 +38,9 @@ class vcModel:
               x = {(i, j): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, j))}
     vcm.print_information()
 
-  
-
+  def criterio2(self, L, lmin, x, vcm):
+    x = {(i, i+1): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, i+1)) for i in range(lmin, L-1, 1)}
+    print(x)
 
 
   
@@ -54,6 +55,7 @@ class vcModel:
     x = {}
     L = 9
     vcm = Model(name='valeriodecarvalho')
-
+    lmin = np.amin(l)
     #self.method()
-    self.criterio1(l, x, vcm, L)
+    #self.criterio1(l, x, vcm, L)
+    self.criterio2(L, lmin, x, vcm)
