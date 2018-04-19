@@ -27,6 +27,22 @@ class vcModel:
   
   nodes = range(1, 6)
   
+  def criterio1(self, l, x, vcm, L):
+    """x = {(i,j): vcm.continuous_var(name='x_{0}_{1}'.format(i,j)) for i in range(1, 6) for j in range(1, 6)}"""
+    x = {(0, i): vcm.continuous_var(name = 'x_{0}_{1}'.format(0, i)) for i in l}
+    for u in range(0, len(l), 1):
+      for i in range(0, L, 1): 
+        for j in range(0, L, 1):
+          for k in range(0, u, 1):
+            if ((0<i) & (i<j) & (j<=L) & (j-i == l[u])):
+              x = {(i, j): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, j))}
+    print(x)
+
+
+  
+
+
+
   
   def method(self):
     vcm = Model(name='valeriodecarvalho')
@@ -35,4 +51,10 @@ class vcModel:
   
   def __init__(self):
     print("iniciovalerio")
-    self.method()
+    l = [3, 2]
+    x = {}
+    L = 5
+    vcm = Model(name='valeriodecarvalho')
+
+    #self.method()
+    self.criterio1(l, x, vcm, L)
