@@ -72,6 +72,7 @@ class vcModel:
       print(d)
       if (bool(d)):
         vcm.add_constraint(vcm.sum(d) >= D[i])  
+      vcm.print_information()
     
 
 
@@ -112,3 +113,5 @@ class vcModel:
     self.criterio2(L, lmin, x, vcm)
     self.getvar(vcm, y)
     self.conservF(vcm, p, q, L, l, f, r1, r2, D, d)
+    vcms = vcm.solve(url=None, key=None)
+    vcms.display()
