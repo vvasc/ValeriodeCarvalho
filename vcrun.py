@@ -1,3 +1,4 @@
+# coding=utf-8
 import cplex
 from cplex.exceptions import CplexError
 import sys
