@@ -36,13 +36,23 @@ class vcModel:
           for k in range(1, u, 1):
             if ((0<i) & (i<j) & (j<=L) & (j-i == l[u])):
               x = {(i, j): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, j))}
-    vcm.print_information()
+    #vcm.print_information()
 
   def criterio2(self, L, lmin, x, vcm):
     x = {(i, i+1): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, i+1)) for i in range(lmin, L-1, 1)}
-    print(x)
+    #print(x)
 
+  def conservF(self, vcm):
+    #tm.add_constraint(tm.sum(x[i,j] for j in target) <= capacities[i])
+    vcm.minimize(vcm.continuous_var())
+    #vcm.add_constraint(vcm.continuous_var() <= )
+    #vcm.get_var_by_index()
 
+  def getvar(self, vcm, y):
+    j = vcm.number_of_continuous_variables
+    for i in range(0, j-1):
+      y.append(vcm.get_var_by_index(i))
+    print(y)
   
   def method(self):
     vcm = Model(name='valeriodecarvalho')
@@ -53,9 +63,12 @@ class vcModel:
     print("iniciovalerio")
     l = [4, 3, 2]
     x = {}
+    y = []
     L = 9
     vcm = Model(name='valeriodecarvalho')
     lmin = np.amin(l)
     #self.method()
-    #self.criterio1(l, x, vcm, L)
+    self.criterio1(l, x, vcm, L)
     self.criterio2(L, lmin, x, vcm)
+    #self.conservF(vcm)
+    self.getvar(vcm, y)
