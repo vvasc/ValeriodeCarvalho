@@ -38,30 +38,40 @@ class vcModel:
           for k in range(1, u, 1):
             if ((0 < i) & (i < j) & (j <= L) & (j-i == l[u])):
               x = {(i, j): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, j))}
-    vcm.print_information()
+    #vcm.print_information()
 
   def criterio2(self, L, lmin, x, vcm):
     x = {(i, i+1): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, i+1)) for i in range(lmin, L-1, 1)}
     #print(x)
 
-  def conservF(self, vcm, p, q, L, f, r1, r2, D):
+  def conservF(self, vcm, p, q, L, l, f, r1, r2, D, d):
     vcm.minimize(vcm.integer_var())
     #tm.add_constraint(tm.sum(x[i,j] for j in target) <= capacities[i])
+    #restrições de conservação de fluxo
     j = vcm.number_of_continuous_variables
     for i in range(0, j-1):
       if (vcm.get_var_by_name('x_' + str(0) + '_' + str(i))):
         p.append(vcm.get_var_by_name('x_' + str(0) + '_' + str(i)))
-      else if (vcm.get_var_by_name('x_' + str(i) + '_' + str(L))):
+      if (vcm.get_var_by_name('x_' + str(i) + '_' + str(L))):
         q.append(vcm.get_var_by_name('x_' + str(i) + '_' + str(L)))
     vcm.add_constraint(vcm.sum(p) == vcm.integer_var())
     vcm.add_constraint(vcm.sum(q) == vcm.integer_var())
     for h in range(1, L):
       for j in range(0, L+1):
         for g in range(0, L+1):
-          if (vcm.get_var_by_name('x_' + str(j) + '_' + str(h)) & vcm.get_var_by_name('x_' + str(h) + '_' + str(g))):
+          if (bool(vcm.get_var_by_name('x_' + str(j) + '_' + str(h))) & bool(vcm.get_var_by_name('x_' + str(h) + '_' + str(g)))):
             r1.append(vcm.get_var_by_name('x_' + str(j) + '_' + str(h)))
             r2.append(vcm.get_var_by_name('x_' + str(h) + '_' + str(g)))
     vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)
+    #restrição de demanda
+    for i in range(len(l)):
+      d = []
+      for k in range(0, L+1):
+        if (vcm.get_var_by_name('x_' + str(k) + '_' + str(k+l[i]))):
+          d.append(vcm.get_var_by_name('x_' + str(k) + '_' + str(k+l[i])))
+      print(d)
+      if (bool(d)):
+        vcm.add_constraint(vcm.sum(d) >= D[i])  
     
 
 
@@ -92,6 +102,7 @@ class vcModel:
     q = [] #variável auxiliar para construção das restrições
     r1 = [] #variável auxiliar para construção das restrições
     r2 = [] #variável auxiliar para construção das restrições
+    d = [] #variável auxiliar para a construção da demanda
     L = 9
     f = []
     vcm = Model(name='valeriodecarvalho')
@@ -100,4 +111,4 @@ class vcModel:
     self.criterio1(l, x, vcm, L)
     self.criterio2(L, lmin, x, vcm)
     self.getvar(vcm, y)
-    self.conservF(vcm, p, q, L, f, r1, r2, D)
+    self.conservF(vcm, p, q, L, l, f, r1, r2, D, d)
