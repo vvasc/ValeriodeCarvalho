@@ -32,13 +32,16 @@ class vcModel:
     """x = {(i,j): vcm.continuous_var(name='x_{0}_{1}'.format(i,j)) for i in range(1, 6) for j in range(1, 6)}"""
     x = {(0, i): vcm.continuous_var(name = 'x_{0}_{1}'.format(0, i)) for i in l}
     x = {}
-    for u in range(1, len(l), 1):
+    for u in range(0, len(l), 1):
       for i in range(0, L+1, 1): 
         for j in range(0, L+1, 1):
-          for k in range(1, u, 1):
-            if ((0 < i) & (i < j) & (j <= L) & (j-i == l[u])):
+          for k in range(0, u+1, 1):
+            if ((0 < i) & (i < j) & (j <= L) & (j-i == l[u]) & (self.inarc(i - l[k], i, vcm))): #problemas
               x = {(i, j): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, j))}
-    #vcm.print_information()
+              print(x)
+    """vcm.print_information()
+    y = []
+    self.getvar(vcm, y)"""
 
   def criterio2(self, L, lmin, x, vcm):
     x = {(i, i+1): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, i+1)) for i in range(lmin, L-1, 1)}
@@ -69,13 +72,10 @@ class vcModel:
       for k in range(0, L+1):
         if (vcm.get_var_by_name('x_' + str(k) + '_' + str(k+l[i]))):
           d.append(vcm.get_var_by_name('x_' + str(k) + '_' + str(k+l[i])))
-      print(d)
+      #print(d)
       if (bool(d)):
-        vcm.add_constraint(vcm.sum(d) >= D[i])  
-      vcm.print_information()
-    
-
-
+        vcm.add_constraint(vcm.sum(d) == D[i])  
+    #vcm.print_information()
     #vcm.add_constraint(vcm.continuous_var() <= )
     #vcm.get_var_by_index()
     #print(p)
@@ -85,8 +85,22 @@ class vcModel:
     j = vcm.number_of_continuous_variables
     for i in range(0, j):
       y.append(vcm.get_var_by_index(i))
-
     #print(y)
+
+  def inarc(self, i, j, vcm):
+    y = []
+    straux = ""
+    straux2 = []
+    if (i<0):
+      return False
+    self.getvar(vcm, y)
+    for k in range(len(y)):
+      straux = y[k].name
+      straux2 = straux.rsplit('_', 2)
+      if((str(i) == straux2[1]) & (str(j) == straux2[2])):
+        return True
+    return False
+    
   
   def method(self):
     vcm = Model(name='valeriodecarvalho')
@@ -109,8 +123,8 @@ class vcModel:
     vcm = Model(name='valeriodecarvalho')
     lmin = np.amin(l)
     #self.method()
-    self.criterio1(l, x, vcm, L)
     self.criterio2(L, lmin, x, vcm)
+    self.criterio1(l, x, vcm, L)
     self.getvar(vcm, y)
     self.conservF(vcm, p, q, L, l, f, r1, r2, D, d)
     vcms = vcm.solve(url=None, key=None)
