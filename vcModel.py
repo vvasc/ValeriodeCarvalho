@@ -34,11 +34,12 @@ class vcModel:
     x = {}
     for u in range(0, len(l), 1):
       for i in range(0, L+1, 1): 
-        for j in range(0, L+1, 1):
+        for j in range(i, L+1, 1):
           for k in range(0, u+1, 1):
             if ((0 < i) & (i < j) & (j <= L) & (j-i == l[u]) & (self.inarc(i - l[k], i, vcm))): #problemas
-              x = {(i, j): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, j))}
-              print(x)
+              if (not self.inarc(i, j, vcm)):
+                x = {(i, j): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, j))}
+                print(x)
     """vcm.print_information()
     y = []
     self.getvar(vcm, y)"""
@@ -64,7 +65,7 @@ class vcModel:
         for g in range(0, L+1):
           if (bool(vcm.get_var_by_name('x_' + str(j) + '_' + str(h))) & bool(vcm.get_var_by_name('x_' + str(h) + '_' + str(g)))):
             r1.append(vcm.get_var_by_name('x_' + str(j) + '_' + str(h)))
-            r2.append(vcm.get_var_by_name('x_' + str(h) + '_' + str(g)))
+            r2.append(vcm.get_var_by_name('x_' + str(h) + '_' + str(g)))  
     vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)
     #restrição de demanda
     for i in range(len(l)):
@@ -100,7 +101,7 @@ class vcModel:
       if((str(i) == straux2[1]) & (str(j) == straux2[2])):
         return True
     return False
-    
+
   
   def method(self):
     vcm = Model(name='valeriodecarvalho')
@@ -125,7 +126,7 @@ class vcModel:
     #self.method()
     self.criterio2(L, lmin, x, vcm)
     self.criterio1(l, x, vcm, L)
-    self.getvar(vcm, y)
-    self.conservF(vcm, p, q, L, l, f, r1, r2, D, d)
+   # self.getvar(vcm, y)
+   # self.conservF(vcm, p, q, L, l, f, r1, r2, D, d)
     vcms = vcm.solve(url=None, key=None)
     vcms.display()
