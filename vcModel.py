@@ -39,7 +39,7 @@ class vcModel:
             if ((0 < i) & (i < j) & (j <= L) & (j-i == l[u]) & (self.inarc(i - l[k], i, vcm))): #problemas
               if (not self.inarc(i, j, vcm)):
                 x = {(i, j): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, j))}
-                print(x)
+                #print(x)
     """vcm.print_information()
     y = []
     self.getvar(vcm, y)"""
@@ -49,7 +49,9 @@ class vcModel:
     #print(x)
 
   def conservF(self, vcm, p, q, L, l, f, r1, r2, D, d):
-    vcm.minimize(vcm.integer_var())
+    vcm.integer_var(name='z')
+    #vcm.minimize(vcm.integer_var(name='z'))
+    vcm.set_objective('min', vcm.get_var_by_name('z'))
     #tm.add_constraint(tm.sum(x[i,j] for j in target) <= capacities[i])
     #restrições de conservação de fluxo
     j = vcm.number_of_continuous_variables
@@ -58,15 +60,27 @@ class vcModel:
         p.append(vcm.get_var_by_name('x_' + str(0) + '_' + str(i)))
       if (vcm.get_var_by_name('x_' + str(i) + '_' + str(L))):
         q.append(vcm.get_var_by_name('x_' + str(i) + '_' + str(L)))
-    vcm.add_constraint(vcm.sum(p) == vcm.integer_var())
-    vcm.add_constraint(vcm.sum(q) == vcm.integer_var())
-    for h in range(1, L):
-      for j in range(0, L+1):
-        for g in range(0, L+1):
+    vcm.add_constraint(vcm.get_var_by_name('z') == vcm.sum(p))
+    vcm.add_constraint(vcm.get_var_by_name('z') == vcm.sum(q))
+    print(vcm.get_constraint_by_index(0))
+    print(vcm.get_objective_expr())
+    for i in range(0, L+1):
+      for j in range(i, L):
+        if (vcm.get_var_by_name('x_' + str(i) + '_' + str(j))):
+          r1.append(vcm.get_var_by_name('x_' + str(i) + '_' + str(j)))
+    for j in range(1, L):
+      for k in range(j, L+1):
+        if (vcm.get_var_by_name('x_' + str(j) + '_' + str(k))):
+          r2.append(vcm.get_var_by_name('x_' + str(j) + '_' + str(k)))
+    vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)
+    
+
+    """  for h in range(1, L):
+      for j in range(h, L+1):
+        for g in range(j, L+1):
           if (bool(vcm.get_var_by_name('x_' + str(j) + '_' + str(h))) & bool(vcm.get_var_by_name('x_' + str(h) + '_' + str(g)))):
             r1.append(vcm.get_var_by_name('x_' + str(j) + '_' + str(h)))
-            r2.append(vcm.get_var_by_name('x_' + str(h) + '_' + str(g)))  
-    vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)
+            r2.append(vcm.get_var_by_name('x_' + str(h) + '_' + str(g)))  """
     #restrição de demanda
     for i in range(len(l)):
       d = []
@@ -76,7 +90,7 @@ class vcModel:
       #print(d)
       if (bool(d)):
         vcm.add_constraint(vcm.sum(d) == D[i])  
-    #vcm.print_information()
+    vcm.print_information()
     #vcm.add_constraint(vcm.continuous_var() <= )
     #vcm.get_var_by_index()
     #print(p)
@@ -126,7 +140,8 @@ class vcModel:
     #self.method()
     self.criterio2(L, lmin, x, vcm)
     self.criterio1(l, x, vcm, L)
-   # self.getvar(vcm, y)
-   # self.conservF(vcm, p, q, L, l, f, r1, r2, D, d)
+    self.getvar(vcm, y)
+    print(y)
+    self.conservF(vcm, p, q, L, l, f, r1, r2, D, d)
     vcms = vcm.solve(url=None, key=None)
     vcms.display()
