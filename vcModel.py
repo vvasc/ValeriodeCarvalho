@@ -45,7 +45,7 @@ class vcModel:
     self.getvar(vcm, y)"""
 
   def criterio2(self, L, lmin, x, vcm):
-    x = {(i, i+1): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, i+1)) for i in range(lmin, L-1, 1)}
+    x = {(i, i+1): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, i+1)) for i in range(lmin, L, 1)}
     #print(x)
 
   def conservF(self, vcm, p, q, L, l, f, r1, r2, D, d):
@@ -61,10 +61,24 @@ class vcModel:
       if (vcm.get_var_by_name('x_' + str(i) + '_' + str(L))):
         q.append(vcm.get_var_by_name('x_' + str(i) + '_' + str(L)))
     vcm.add_constraint(vcm.get_var_by_name('z') == vcm.sum(p))
-    vcm.add_constraint(vcm.get_var_by_name('z') == vcm.sum(q))
-    print(vcm.get_constraint_by_index(0))
-    print(vcm.get_objective_expr())
-    for i in range(0, L+1):
+    vcm.add_constraint(- vcm.get_var_by_name('z') == - vcm.sum(q))
+    for j in range(1, L, 1):
+      for i in range(0, j, 1):
+        if (vcm.get_var_by_name('x_' + str(i) + '_' + str(j))):
+          r1.append(vcm.get_var_by_name('x_' + str(i) + '_' + str(j)))
+      for k in range(j, L+1, 1):
+        if (vcm.get_var_by_name('x_' + str(j) + '_' + str(k))):
+          r2.append(vcm.get_var_by_name('x_' + str(j) + '_' + str(k)))
+      if (bool(r1) & bool(r2)):
+        vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)
+      r1 = []
+      r2 = []  
+
+
+
+
+
+    """    for i in range(0, L+1):
       for j in range(i, L):
         if (vcm.get_var_by_name('x_' + str(i) + '_' + str(j))):
           r1.append(vcm.get_var_by_name('x_' + str(i) + '_' + str(j)))
@@ -72,7 +86,7 @@ class vcModel:
       for k in range(j, L+1):
         if (vcm.get_var_by_name('x_' + str(j) + '_' + str(k))):
           r2.append(vcm.get_var_by_name('x_' + str(j) + '_' + str(k)))
-    vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)
+    vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)"""
     
 
     """  for h in range(1, L):
@@ -144,4 +158,5 @@ class vcModel:
     print(y)
     self.conservF(vcm, p, q, L, l, f, r1, r2, D, d)
     vcms = vcm.solve(url=None, key=None)
+    #print(vcm.iter_continuous_vars())
     vcms.display()
