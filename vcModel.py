@@ -48,7 +48,7 @@ class vcModel:
     x = {(i, i+1): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, i+1)) for i in range(lmin, L, 1)}
     #print(x)
 
-  def conservF(self, vcm, p, q, L, l, f, r1, r2, D, d):
+  def conservF(self, vcm, p, q, L, l, f, r1, r2, D, d, ek):
     vcm.integer_var(name='z')
     #vcm.minimize(vcm.integer_var(name='z'))
     vcm.set_objective('min', vcm.get_var_by_name('z'))
@@ -73,28 +73,6 @@ class vcModel:
         vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)
       r1 = []
       r2 = []  
-
-
-
-
-
-    """    for i in range(0, L+1):
-      for j in range(i, L):
-        if (vcm.get_var_by_name('x_' + str(i) + '_' + str(j))):
-          r1.append(vcm.get_var_by_name('x_' + str(i) + '_' + str(j)))
-    for j in range(1, L):
-      for k in range(j, L+1):
-        if (vcm.get_var_by_name('x_' + str(j) + '_' + str(k))):
-          r2.append(vcm.get_var_by_name('x_' + str(j) + '_' + str(k)))
-    vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)"""
-    
-
-    """  for h in range(1, L):
-      for j in range(h, L+1):
-        for g in range(j, L+1):
-          if (bool(vcm.get_var_by_name('x_' + str(j) + '_' + str(h))) & bool(vcm.get_var_by_name('x_' + str(h) + '_' + str(g)))):
-            r1.append(vcm.get_var_by_name('x_' + str(j) + '_' + str(h)))
-            r2.append(vcm.get_var_by_name('x_' + str(h) + '_' + str(g)))  """
     #restrição de demanda
     for i in range(len(l)):
       d = []
@@ -104,6 +82,7 @@ class vcModel:
       #print(d)
       if (bool(d)):
         vcm.add_constraint(vcm.sum(d) == D[i])  
+    vcm.add_constraint(vcm.get_var_by_name('z') <= ek)
     vcm.print_information()
     #vcm.add_constraint(vcm.continuous_var() <= )
     #vcm.get_var_by_index()
@@ -148,6 +127,7 @@ class vcModel:
     r2 = [] #variável auxiliar para construção das restrições
     d = [] #variável auxiliar para a construção da demanda
     L = 9
+    ek = 10
     f = []
     vcm = Model(name='valeriodecarvalho')
     lmin = np.amin(l)
@@ -156,7 +136,7 @@ class vcModel:
     self.criterio1(l, x, vcm, L)
     self.getvar(vcm, y)
     print(y)
-    self.conservF(vcm, p, q, L, l, f, r1, r2, D, d)
+    self.conservF(vcm, p, q, L, l, f, r1, r2, D, d, ek)
     vcms = vcm.solve(url=None, key=None)
     #print(vcm.iter_continuous_vars())
     vcms.display()
