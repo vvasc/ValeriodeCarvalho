@@ -5,6 +5,8 @@ import sys
 import numpy as np
 import docplex.mp
 from docplex.mp.model import Model
+from docplex.util.environment import get_environment
+
 
 
 """tm = Model(name='transportation')
@@ -115,10 +117,12 @@ class vcModel:
     x = {(i,j): vcm.continuous_var(name='x_{0}_{1}'.format(i,j)) for i in range(1, 6) for j in range(1, 6)}
     print(x)
   
-  def __init__(self):
+  def __init__(self, l, D, L, ek, name):
     print("iniciovalerio")
-    l = [4, 3, 2]
-    D = [10, 5, 3]
+    #l = [4, 3, 2]
+    #D = [10, 5, 3]
+    #L = 9
+    #ek = 10
     x = {}
     y = [] #variavel auxiliar para imprimir a construção de arcos
     p = [] #variável auxiliar para construção das restrições
@@ -126,8 +130,6 @@ class vcModel:
     r1 = [] #variável auxiliar para construção das restrições
     r2 = [] #variável auxiliar para construção das restrições
     d = [] #variável auxiliar para a construção da demanda
-    L = 9
-    ek = 10
     f = []
     vcm = Model(name='valeriodecarvalho')
     lmin = np.amin(l)
@@ -135,8 +137,11 @@ class vcModel:
     self.criterio2(L, lmin, x, vcm)
     self.criterio1(l, x, vcm, L)
     self.getvar(vcm, y)
-    print(y)
     self.conservF(vcm, p, q, L, l, f, r1, r2, D, d, ek)
     vcms = vcm.solve(url=None, key=None)
+    reseau = open(name, 'w', 0)
+    reseau.write('Função Objetivo: ' + str(vcm.solution.get_objective_value))
+    reseau.close()
+    with get_environment().get_output_stream("solution.json") as fp:
+      vcm.solution.export(fp, "json")
     #print(vcm.iter_continuous_vars())
-    vcms.display()

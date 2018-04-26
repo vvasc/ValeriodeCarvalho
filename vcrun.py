@@ -8,4 +8,4 @@ import matplotlib as mpl
 from vcModel import vcModel as vc
 import pytest as ptest
 
-prob = vc()
+prob = vc([4, 3, 2], [10, 5, 3], 9, 10, "teste1.txt")
