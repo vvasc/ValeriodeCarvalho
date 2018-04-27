@@ -139,7 +139,8 @@ class vcModel:
     self.getvar(vcm, y)
     self.conservF(vcm, p, q, L, l, f, r1, r2, D, d, ek)
     vcms = vcm.solve(url=None, key=None)
-    reseau = open(name, 'w', 0)
+    vcms.display()
+    reseau = open('teste.txt', 'w', 0)
     reseau.write('Função Objetivo: ' + str(vcm.solution.get_objective_value))
     reseau.close()
     with get_environment().get_output_stream("solution.json") as fp:
