@@ -9,29 +9,11 @@ from docplex.util.environment import get_environment
 
 
 
-"""tm = Model(name='transportation')
-capacities = {1: 15, 2: 20}
-demands = {3: 7, 4: 10, 5: 15}
-costs = {(1,3): 2, (1,5):4, (2,4):5, (2,5):3}
-# Python ranges will be used to iterate on source, target nodes.
-source = range(1, 3) # {1, 2}
-target = range(3, 6) # {3,4,5}
-# create flow variables for each couple of nodes
-# x(i,j) is the flow going out of node i to node j
-x = {(i,j): tm.continuous_var(name='x_{0}_{1}'.format(i,j)) for i in source for j in target}
-
-# each arc comes with a cost. Minimize all costed flows
-tm.minimize(tm.sum(x[i,j]*costs.get((i,j), 0) for i in source for j in target))
-
-tm.print_information()
-#def method(self):"""
-
 class vcModel:
   
   nodes = range(1, 6)
   
   def criterio1(self, l, x, vcm, L):
-    """x = {(i,j): vcm.continuous_var(name='x_{0}_{1}'.format(i,j)) for i in range(1, 6) for j in range(1, 6)}"""
     x = {(0, i): vcm.continuous_var(name = 'x_{0}_{1}'.format(0, i)) for i in l}
     x = {}
     for u in range(0, len(l), 1):
@@ -41,20 +23,15 @@ class vcModel:
             if ((0 < i) & (i < j) & (j <= L) & (j-i == l[u]) & (self.inarc(i - l[k], i, vcm))): #problemas
               if (not self.inarc(i, j, vcm)):
                 x = {(i, j): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, j))}
-                #print(x)
-    """vcm.print_information()
-    y = []
-    self.getvar(vcm, y)"""
-
+               
   def criterio2(self, L, lmin, x, vcm):
     x = {(i, i+1): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, i+1)) for i in range(lmin, L, 1)}
-    #print(x)
+    
 
   def conservF(self, vcm, p, q, L, l, f, r1, r2, D, d, ek):
-    vcm.continuous_var(name='z')
-    #vcm.minimize(vcm.integer_var(name='z'))
+    #vcm.continuous_var(name='z')
+    vcm.minimize(vcm.integer_var(name='z'))
     vcm.set_objective('min', vcm.get_var_by_name('z'))
-    #tm.add_constraint(tm.sum(x[i,j] for j in target) <= capacities[i])
     #restrições de conservação de fluxo
     j = vcm.number_of_continuous_variables
     for i in range(0, j-1):
@@ -75,27 +52,22 @@ class vcModel:
         vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)
       r1 = []
       r2 = []  
-    #restrição de demanda
     for i in range(len(l)):
       d = []
       for k in range(0, L+1):
         if (vcm.get_var_by_name('x_' + str(k) + '_' + str(k+l[i]))):
           d.append(vcm.get_var_by_name('x_' + str(k) + '_' + str(k+l[i])))
-      #print(d)
+
       if (bool(d)):
         vcm.add_constraint(vcm.sum(d) == D[i])  
     vcm.add_constraint(vcm.get_var_by_name('z') <= ek)
     vcm.print_information()
-    #vcm.add_constraint(vcm.continuous_var() <= )
-    #vcm.get_var_by_index()
-    #print(p)
-    #print(q)
 
   def getvar(self, vcm, y):
     j = vcm.number_of_continuous_variables
     for i in range(0, j):
       y.append(vcm.get_var_by_index(i))
-    #print(y)
+   
 
   def inarc(self, i, j, vcm):
     y = []
@@ -112,17 +84,8 @@ class vcModel:
     return False
 
   
-  def method(self):
-    vcm = Model(name='valeriodecarvalho')
-    x = {(i,j): vcm.continuous_var(name='x_{0}_{1}'.format(i,j)) for i in range(1, 6) for j in range(1, 6)}
-    print(x)
-  
   def __init__(self, l, D, L, ek, name):
     print("iniciovalerio")
-    #l = [4, 3, 2]
-    #D = [10, 5, 3]
-    #L = 9
-    #ek = 10
     x = {}
     y = [] #variavel auxiliar para imprimir a construção de arcos
     p = [] #variável auxiliar para construção das restrições
@@ -133,16 +96,13 @@ class vcModel:
     f = []
     vcm = Model(name='valeriodecarvalho')
     lmin = np.amin(l)
-    #self.method()
     self.criterio2(L, lmin, x, vcm)
     self.criterio1(l, x, vcm, L)
     self.getvar(vcm, y)
     self.conservF(vcm, p, q, L, l, f, r1, r2, D, d, ek)
     vcms = vcm.solve(url=None, key=None)
-    #vcms.display()
     reseau = open(name, 'w', 0)
     reseau.write('Função Objetivo: ' + str(vcm.solution.get_objective_value))
     reseau.close()
     with get_environment().get_output_stream("solution.json") as fp:
       vcm.solution.export(fp, "json")
-    #print(vcm.iter_continuous_vars())
