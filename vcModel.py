@@ -29,8 +29,8 @@ class vcModel:
     
 
   def conservF(self, vcm, p, q, L, l, f, r1, r2, D, d, ek):
-    #vcm.continuous_var(name='z')
-    vcm.integer_var(name='z')
+    vcm.continuous_var(name='z')
+    #vcm.integer_var(name='z')
     vcm.set_objective('min', vcm.get_var_by_name('z'))
     #restrições de conservação de fluxo
     j = vcm.number_of_continuous_variables
@@ -60,7 +60,6 @@ class vcModel:
 
       if (bool(d)):
         vcm.add_constraint(vcm.sum(d) == D[i])  
-    vcm.add_constraint(vcm.get_var_by_name('z') <= ek)
     vcm.print_information()
 
   def getvar(self, vcm, y):
