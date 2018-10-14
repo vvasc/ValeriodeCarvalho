@@ -1,0 +1,20 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+__init__	../vcModel.py	/^  def __init__(self, l, D, L, ek, name):$/;"	kind:member	line:86
+conservF	../vcModel.py	/^  def conservF(self, vcm, p, q, L, l, f, r1, r2, D, d, ek):$/;"	kind:member	line:31
+criterio1	../vcModel.py	/^  def criterio1(self, l, x, vcm, L):$/;"	kind:member	line:16
+criterio2	../vcModel.py	/^  def criterio2(self, L, lmin, x, vcm):$/;"	kind:member	line:27
+getvar	../vcModel.py	/^  def getvar(self, vcm, y):$/;"	kind:member	line:65
+inarc	../vcModel.py	/^  def inarc(self, i, j, vcm):$/;"	kind:member	line:71
+nodes	../vcModel.py	/^  nodes = range(1, 6)$/;"	kind:variable	line:14
+prob	../vcrun.py	/^prob = vc([4, 3, 2], [10, 5, 3], 9, 10, "exemplo1")$/;"	kind:variable	line:60
+t0	../Classe 2 x2/vcrun.py	/^t0 = time.time()$/;"	kind:variable	line:60
+t0	../vcrun.py	/^t0 = time.time()$/;"	kind:variable	line:59
+vcModel	../vcModel.py	/^class vcModel:$/;"	kind:class	line:12
+vcModel.py	../vcModel.py	1;"	kind:file	line:1
+vcrun.py	../Classe 2 x2/vcrun.py	1;"	kind:file	line:1
+vcrun.py	../vcrun.py	1;"	kind:file	line:1

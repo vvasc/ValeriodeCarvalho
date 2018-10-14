@@ -14,7 +14,7 @@ class vcModel:
   nodes = range(1, 6)
   
   def criterio1(self, l, x, vcm, L):
-    x = {(0, i): vcm.continuous_var(name = 'x_{0}_{1}'.format(0, i)) for i in l}
+    x = {(0, i): vcm.integer_var(name = 'x_{0}_{1}'.format(0, i)) for i in l}
     x = {}
     for u in range(0, len(l), 1):
       for i in range(0, L+1, 1): 
@@ -22,10 +22,10 @@ class vcModel:
           for k in range(0, u+1, 1):
             if ((0 < i) & (i < j) & (j <= L) & (j-i == l[u]) & (self.inarc(i - l[k], i, vcm))): #problemas
               if (not self.inarc(i, j, vcm)):
-                x = {(i, j): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, j))}
+                x = {(i, j): vcm.integer_var(name = 'x_{0}_{1}'.format(i, j))}
                
   def criterio2(self, L, lmin, x, vcm):
-    x = {(i, i+1): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, i+1)) for i in range(lmin, L, 1)}
+    x = {(i, i+1): vcm.integer_var(name = 'x_{0}_{1}'.format(i, i+1)) for i in range(lmin, L, 1)}
     
 
   def conservF(self, vcm, p, q, L, l, f, r1, r2, D, d, ek):
@@ -33,7 +33,7 @@ class vcModel:
     #vcm.integer_var(name='z')
     vcm.set_objective('min', vcm.get_var_by_name('z'))
     #restrições de conservação de fluxo
-    j = vcm.number_of_continuous_variables
+    j = vcm.number_of_integer_variables
     for i in range(0, j-1):
       if (vcm.get_var_by_name('x_' + str(0) + '_' + str(i))):
         p.append(vcm.get_var_by_name('x_' + str(0) + '_' + str(i)))
@@ -63,7 +63,7 @@ class vcModel:
     vcm.print_information()
 
   def getvar(self, vcm, y):
-    j = vcm.number_of_continuous_variables
+    j = vcm.number_of_integer_variables
     for i in range(0, j):
       y.append(vcm.get_var_by_index(i))
    
@@ -103,5 +103,7 @@ class vcModel:
     reseau = open(name, 'w', 0)
     reseau.write('Função Objetivo: ' + str(vcm.solution.get_objective_value))
     reseau.close()
+    self.getvar(vcm, x)
+    print(x)
     with get_environment().get_output_stream("solution.json") as fp:
       vcm.solution.export(fp, "json")
