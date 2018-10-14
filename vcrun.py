@@ -3,10 +3,7 @@ import cplex
 from cplex.exceptions import CplexError
 import sys
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 from vcModel import vcModel as vc
-import pytest as ptest
 import time
 
 #Classe 1
@@ -60,7 +57,7 @@ import time
 #prob = vc([30, 29, 28, 27, 26, 24, 21, 20, 19, 17, 16, 15, 14, 13, 12, 10, 9, 8, 7, 5], [1, 4, 8, 9, 3, 8, 5, 2, 3, 7, 3, 6, 10, 5, 3, 6, 2, 9, 4, 10], 82, 385, "exemplo 2")
 
 t0 = time.time()
-
+prob = vc([4, 3, 2], [20, 20, 20], [9, 12], [20, 10], "exemplo1")
 print time.time() - t0,
 
 
