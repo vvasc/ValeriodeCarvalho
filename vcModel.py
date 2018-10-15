@@ -6,7 +6,10 @@ import numpy as np
 import docplex.mp
 from docplex.mp.model import Model
 from docplex.util.environment import get_environment
-
+import multiprocessing
+from threading import current_thread
+from rx import Observable
+from rx.concurrency import ThreadPoolScheduler
 
 
 class vcModel:
@@ -103,10 +106,16 @@ class vcModel:
     f = []
     vcm = Model(name='valeriodecarvalho')
     lmin = np.amin(l)
-    self.criterio2(L, lmin, x, vcm)
-    self.criterio1(l, x, vcm, L)
+    optimal_thread_count = multiprocessing.cpu_count()
+    pool_scheduler = ThreadPoolScheduler(optimal_thread_count)
+    Observable.range(1, 10) \
+      .map(self.criterio2(L, lmin, x, vcm)) \
+      .map(self.criterio1(l, x, vcm, L)) \
+      .subscribe_on(pool_scheduler) \
+      .subscribe( \
+         self.conservF(vcm, p, q, L, l, f, r1, r2, D, d, ek) \
+      )
     self.getvar(vcm, y)
-    self.conservF(vcm, p, q, L, l, f, r1, r2, D, d, ek)
     vcms = vcm.solve(url=None, key=None)
     reseau = open(name, 'w', 0)
     reseau.write('Função Objetivo: ' + str(vcm.solution.get_objective_value))
