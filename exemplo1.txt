@@ -1,0 +1,1 @@
+Função Objetivo: <bound method SolveSolution.get_objective_value of docplex.mp.solution.SolveSolution(obj=10,values={z_0:10,x_10_15:10,x_0_7..>
