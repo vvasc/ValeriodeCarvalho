@@ -33,12 +33,10 @@ class vcModel:
   def conservF(self, vcm, p, q, L, l, f, r1, r2, D, d, ek):
     #vcm.continuous_var(name='z')
     z = []
-    zObjective = []
     {(k): vcm.continuous_var(name = 'z_{0}'.format(k)) for k in range(0, len(L), 1)}
     for k in range(0, len(L)):
       z.append(vcm.get_var_by_name('z_' + str(k)))
-      zObjective.append(vcm.get_var_by_name('z_' + str(k)) * L[k])
-    vcm.set_objective('min', vcm.sum(zObjective))
+    vcm.set_objective('min', vcm.sum(z))
     #restrições de conservação de fluxo
     j = vcm.number_of_continuous_variables
     print(j)
@@ -54,7 +52,7 @@ class vcModel:
           q.append(vcm.get_var_by_name('x_' + str(i) + '_' + str(L[k])))
         if (vcm.get_var_by_name('x_' + str(L[k]) + '_' + str(i))):
           p.append(vcm.get_var_by_name('x_' + str(L[k]) + '_' + str(i)))
-      vcm.add_constraint(- vcm.get_var_by_name('z_' + str(k)) == - vcm.sum(q) + vcm.sum(p))
+      vcm.add_constraint(- vcm.get_var_by_name('z_' + str(k)) == - vcm.sum(q))
     for j in range(1, L[0], 1):
       for i in range(0, j, 1):
         if (vcm.get_var_by_name('x_' + str(i) + '_' + str(j))):
@@ -62,8 +60,8 @@ class vcModel:
       for k in range(j, L[0], 1):
         if (vcm.get_var_by_name('x_' + str(j) + '_' + str(k))):
           r2.append(vcm.get_var_by_name('x_' + str(j) + '_' + str(k)))
-    if (bool(r1) & bool(r2)):
-      vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)
+      if (bool(r1) & bool(r2)):
+        vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)
       r1 = []
       r2 = []  
     for i in range(len(l)):
