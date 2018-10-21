@@ -6,6 +6,8 @@ import numpy as np
 import docplex.mp
 from docplex.mp.model import Model
 from docplex.util.environment import get_environment
+import time
+
 
 
 
@@ -92,6 +94,7 @@ class vcModel:
 
   
   def __init__(self, l, D, L, ek, name):
+    t0 = time.time()
     print("iniciovalerio")
     x = {}
     y = [] #variavel auxiliar para imprimir a construção de arcos
@@ -113,8 +116,10 @@ class vcModel:
     print(z)
     
     vcms = vcm.solve(url=None, key=None)
+    tempo = time.time() - t0,
     reseau = open(name, 'w', 0)
     reseau.write('Função Objetivo: ' + str(vcm.solution.get_objective_value))
+    reseau.write('\nTempo Total: ' + str(tempo))
     reseau.close()
     with get_environment().get_output_stream("solution.json") as fp:
       vcm.solution.export(fp, "json")

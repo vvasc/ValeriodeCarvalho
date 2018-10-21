@@ -1,0 +1,2 @@
+Função Objetivo: <bound method SolveSolution.get_objective_value of docplex.mp.solution.SolveSolution(obj=4.22222,values={x_36_49:2.88889,x_..>
+Tempo Total: (12.749609231948853,)
