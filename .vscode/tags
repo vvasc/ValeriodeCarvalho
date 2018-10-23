@@ -1,0 +1,20 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+__init__	../vcModel.py	/^  def __init__(self, l, D, L, ek, name):$/;"	kind:member	line:102
+conservF	../vcModel.py	/^  def conservF(self, vcm, p, q, L, l, f, r1, r2, D, d, ek):$/;"	kind:member	line:33
+criterio1	../vcModel.py	/^  def criterio1(self, l, x, vcm, L):$/;"	kind:member	line:18
+criterio2	../vcModel.py	/^  def criterio2(self, L, lmin, x, vcm):$/;"	kind:member	line:29
+getvar	../vcModel.py	/^  def getvar(self, vcm, y):$/;"	kind:member	line:82
+inarc	../vcModel.py	/^  def inarc(self, i, j, vcm):$/;"	kind:member	line:87
+nodes	../vcModel.py	/^  nodes = range(1, 6)$/;"	kind:variable	line:16
+prob	../Classe5/vcrun.py	/^prob = vc([30, 29, 28, 27, 25, 23, 22, 20, 19, 18, 17, 15, 14, 13, 12, 10, 9, 7, 6, 5], [8, 4, 8, 9, 1, 2, 10, 2, 5, 1, 5, 5, 9, 1, 9, 5, 9, 10, 10, 4], 100, 759, "exemplo 4")$/;"	kind:variable	line:62
+prob	../vcrun.py	/^prob = vc([7, 5, 3], [10, 10, 10], [15, 8], [5, 20], "exemplo1.txt")$/;"	kind:variable	line:63
+t0	../Classe5/vcrun.py	/^t0 = time.time()$/;"	kind:variable	line:61
+vcModel	../vcModel.py	/^class vcModel:$/;"	kind:class	line:14
+vcModel.py	../vcModel.py	1;"	kind:file	line:1
+vcrun.py	../Classe5/vcrun.py	1;"	kind:file	line:1
+vcrun.py	../vcrun.py	1;"	kind:file	line:1

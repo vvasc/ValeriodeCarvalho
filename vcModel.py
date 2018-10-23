@@ -27,7 +27,9 @@ class vcModel:
                 x = {(i, j): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, j))}
                
   def criterio2(self, L, lmin, x, vcm):
-    x = {(i, i+1): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, i+1)) for i in range(lmin, L[0]+1, 1)}
+    x = []
+    x.append({(i, i+1): vcm.continuous_var(name = 'x_{0}_{1}'.format(i, i+1)) for i in range(lmin, L[0]+1, 1)})
+    #print(x)
     
 
   def conservF(self, vcm, p, q, L, l, f, r1, r2, D, d, ek):
@@ -39,29 +41,34 @@ class vcModel:
     vcm.set_objective('min', vcm.sum(z))
     #restrições de conservação de fluxo
     j = vcm.number_of_continuous_variables
-    print(j)
-    for i in range(0, j-1):
+    #print(j)
+    for i in range(0, L[0]-1):
       if (vcm.get_var_by_name('x_' + str(0) + '_' + str(i))):
         p.append(vcm.get_var_by_name('x_' + str(0) + '_' + str(i)))
     vcm.add_constraint(vcm.sum(z) == vcm.sum(p))
+    p = []
+    q = []
     for k in range(0, len(L)):
       p = []
       q = []
-      for i in range(0, j-1):
+      for i in range(1, L[0]+1):
         if (vcm.get_var_by_name('x_' + str(i) + '_' + str(L[k]))):
           q.append(vcm.get_var_by_name('x_' + str(i) + '_' + str(L[k])))
         if (vcm.get_var_by_name('x_' + str(L[k]) + '_' + str(i))):
           p.append(vcm.get_var_by_name('x_' + str(L[k]) + '_' + str(i)))
-      vcm.add_constraint(- vcm.get_var_by_name('z_' + str(k)) == - vcm.sum(q))
+      if (not p):
+        vcm.add_constraint(vcm.get_var_by_name('z_' + str(k)) == vcm.sum(q))  
+      else:
+        vcm.add_constraint(vcm.get_var_by_name('z_' + str(k)) == vcm.sum(q))
     for j in range(1, L[0], 1):
       for i in range(0, j, 1):
         if (vcm.get_var_by_name('x_' + str(i) + '_' + str(j))):
           r1.append(vcm.get_var_by_name('x_' + str(i) + '_' + str(j)))
-      for k in range(j, L[0], 1):
+      for k in range(0, L[0]+1, 1):
         if (vcm.get_var_by_name('x_' + str(j) + '_' + str(k))):
           r2.append(vcm.get_var_by_name('x_' + str(j) + '_' + str(k)))
       if (bool(r1) & bool(r2)):
-        vcm.add_constraint(vcm.sum(r1) - vcm.sum(r2) == 0)
+        vcm.add_constraint(- vcm.sum(r1) + vcm.sum(r2) == 0)
       r1 = []
       r2 = []  
     for i in range(len(l)):
@@ -111,14 +118,18 @@ class vcModel:
     self.criterio2(L, lmin, x, vcm)
     self.criterio1(l, x, vcm, L)
     self.getvar(vcm, y) 
-    print(y)
+    #print(y)
     z = []
     self.conservF(vcm, p, q, L, l, f, r1, r2, D, d, ek) 
     for k in range(0, len(L)):
       z.append(vcm.get_var_by_name('z_' + str(k)))
-    print(z)
-    
-    vcms = vcm.solve(url=None, key=None)
+    #print(z)
+    self.getvar(vcm, y)
+    consts = []
+    n = vcm.number_of_constraints
+    for i in range(n):
+      consts.append(vcm.get_constraint_by_index(i))
+    vcms = vcm.solve(url=None, key=None, log_output=True)
     tempo = time.time() - t0,
     reseau = open(name, 'w', 0)
     reseau.write('Função Objetivo: ' + str(vcm.solution.get_objective_value))

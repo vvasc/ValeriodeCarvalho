@@ -1,0 +1,11 @@
+Função Objetivo: 16.0075757576
+Função Objetivo: 15.75
+Função Objetivo: 14.4166666667
+Função Objetivo: 14.3484848485
+Função Objetivo: 13.7359848485
+Função Objetivo: 13.7
+Função Objetivo: 13.6909090909
+Função Objetivo: 13.5256916996
+Função Objetivo: 13.5217391304
+
+ Tempo Total: (1.8320989608764648,)
